@@ -1,0 +1,7 @@
+/.env
+/database/*.sqlite
+/database/*.sqlite-shm
+/database/*.sqlite-wal
+/tmp
+/velo
+/.idea/
