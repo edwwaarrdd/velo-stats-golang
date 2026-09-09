@@ -1,0 +1,50 @@
+x-app: &app
+  build: .
+  environment:
+    APP_ENV: local
+    HTTP_PORT: "8000"
+    DB_DATABASE: /app/database/database.sqlite
+    RIDES_JSON_PATH: /app/data/rides.json
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+  volumes:
+    # The SQLite database and the ride export are shared with the host, so data
+    # survives a rebuild and a new export can be dropped in without one.
+    - ./database:/app/database
+    - ./data:/app/data
+  depends_on:
+    redis:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    command: ["serve"]
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/_healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    <<: *app
+    command: ["work", "-queue=default"]
+
+  worker-ride-distance:
+    <<: *app
+    command: ["work", "-queue=ride_distance_checks"]
+
+  worker-ride-weather:
+    <<: *app
+    command: ["work", "-queue=ride_weather_checks"]
