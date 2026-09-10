@@ -45,7 +45,6 @@ func TestSummaryAggregatesDurationAndDistanceAcrossEveryRide(t *testing.T) {
 	}`)
 }
 
-// summary decodes the summary endpoint's body.
 func summary(t *testing.T, body string) map[string]any {
 	t.Helper()
 

@@ -11,18 +11,14 @@ import (
 	"velostats/internal/support"
 )
 
-// Repository stores the weather already fetched for a ride.
 type Repository struct {
 	db *sql.DB
 }
 
-// NewRepository builds a repository over the given database.
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-// FindForRide returns the cached observation for a ride, or nil when none has
-// been fetched yet.
 func (r *Repository) FindForRide(ctx context.Context, rideID int64) (*Observation, error) {
 	var (
 		observation Observation
@@ -57,7 +53,6 @@ func (r *Repository) FindForRide(ctx context.Context, rideID int64) (*Observatio
 	return &observation, nil
 }
 
-// Save caches the observation for a ride, replacing any earlier one.
 func (r *Repository) Save(ctx context.Context, rideID int64, observation Observation) error {
 	now := support.DatabaseDateTime(time.Now())
 

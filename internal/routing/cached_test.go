@@ -11,7 +11,6 @@ import (
 	"velostats/internal/testsupport"
 )
 
-// countingService reports a fixed route and counts how often it was asked.
 type countingService struct {
 	route routing.Route
 	calls int

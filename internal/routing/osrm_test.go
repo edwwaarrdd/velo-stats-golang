@@ -16,7 +16,6 @@ var (
 	antwerpNorth = support.Coordinate{Lat: 51.21797, Lon: 4.40243}
 )
 
-// fakeOSRM serves a canned response and records the paths it was asked for.
 func fakeOSRM(t *testing.T, body string) (*routing.OSRMService, *[]string) {
 	t.Helper()
 

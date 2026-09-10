@@ -1,9 +1,7 @@
-// Package weather fetches and caches the weather a ride was made in.
 package weather
 
 import "time"
 
-// Observation is the biking-relevant weather at a place and hour.
 type Observation struct {
 	TemperatureC            float64
 	ApparentTemperatureC    float64

@@ -11,7 +11,6 @@ import (
 	"velostats/internal/weather"
 )
 
-// countingService reports a fixed observation and counts how often it was asked.
 type countingService struct {
 	observation weather.Observation
 	calls       int

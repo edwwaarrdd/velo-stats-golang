@@ -41,7 +41,6 @@ func (s *stubArchive) GetWeather(context.Context, support.Coordinate, time.Time)
 	return s.observation, nil
 }
 
-// newHandlers wires the job handlers over a test database and stub upstreams.
 func newHandlers(t *testing.T, db *sql.DB, router *stubRouter, archive *stubArchive) *jobs.Handlers {
 	t.Helper()
 

@@ -2,7 +2,6 @@ package console
 
 import "strings"
 
-// splitQueues turns a comma-separated option into a list of queue names.
 func splitQueues(value string) []string {
 	var queues []string
 

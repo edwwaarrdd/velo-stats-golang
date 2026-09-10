@@ -2,8 +2,6 @@ FROM golang:1.25 AS build
 
 WORKDIR /src
 
-# Dependencies are cached separately from the source, so editing code does not
-# re-download the module cache.
 COPY go.mod go.sum ./
 RUN go mod download
 

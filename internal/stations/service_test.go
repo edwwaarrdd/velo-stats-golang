@@ -10,7 +10,6 @@ import (
 	"velostats/internal/stations"
 )
 
-// fakeFeed serves a canned GBFS response.
 func fakeFeed(t *testing.T, status int, body string) *stations.VeloAntwerpService {
 	t.Helper()
 

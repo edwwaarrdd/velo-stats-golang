@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// Float is a float64 that always encodes with a decimal point, so a distance of
-// 1500 metres is rendered as 1500.0 rather than as the integer 1500.
+// Always encodes with a decimal point, so a distance of 1500 metres is rendered
+// as 1500.0 rather than as the integer 1500.
 type Float float64
 
 func (f Float) MarshalJSON() ([]byte, error) {
@@ -21,18 +21,15 @@ func (f Float) MarshalJSON() ([]byte, error) {
 	return []byte(encoded), nil
 }
 
-// NullFloat is a Float that encodes as null when it is absent.
 type NullFloat struct {
 	Float Float
 	Valid bool
 }
 
-// FloatValue wraps a present float.
 func FloatValue(value float64) NullFloat {
 	return NullFloat{Float: Float(value), Valid: true}
 }
 
-// FloatPtr wraps a float that may be absent.
 func FloatPtr(value *float64) NullFloat {
 	if value == nil {
 		return NullFloat{}
@@ -49,13 +46,11 @@ func (f NullFloat) MarshalJSON() ([]byte, error) {
 	return f.Float.MarshalJSON()
 }
 
-// NullInt is an int64 that encodes as null when it is absent.
 type NullInt struct {
 	Int   int64
 	Valid bool
 }
 
-// IntPtr wraps an int that may be absent.
 func IntPtr(value *int64) NullInt {
 	if value == nil {
 		return NullInt{}
@@ -72,8 +67,6 @@ func (i NullInt) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(i.Int, 10)), nil
 }
 
-// MarshalJSON encodes a value the way the API renders it: slashes and unicode
-// left unescaped, and no trailing newline.
 func MarshalJSON(value any) ([]byte, error) {
 	var buffer bytes.Buffer
 

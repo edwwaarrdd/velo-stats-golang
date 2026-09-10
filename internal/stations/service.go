@@ -8,19 +8,15 @@ import (
 	"time"
 )
 
-// InformationService fetches bike-share station information from upstream.
 type InformationService interface {
 	FetchStations(ctx context.Context) ([]Station, error)
 }
 
-// VeloAntwerpService fetches Velo Antwerp station information from the public
-// GBFS feed.
 type VeloAntwerpService struct {
 	client *http.Client
 	url    string
 }
 
-// NewVeloAntwerpService builds the GBFS-backed station information service.
 func NewVeloAntwerpService(client *http.Client, url string) *VeloAntwerpService {
 	return &VeloAntwerpService{client: client, url: url}
 }
@@ -41,7 +37,6 @@ type gbfsFeed struct {
 	} `json:"data"`
 }
 
-// FetchStations returns every station the feed lists.
 func (s *VeloAntwerpService) FetchStations(ctx context.Context) ([]Station, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()

@@ -5,7 +5,6 @@ import (
 	"velostats/internal/weather"
 )
 
-// Resource is how a ride is rendered by the API.
 type Resource struct {
 	RideID                    int64             `json:"ride_id"`
 	AccountID                 int64             `json:"account_id"`
@@ -28,8 +27,6 @@ type Resource struct {
 	Weather                   *weather.Resource `json:"weather"`
 }
 
-// NewResource renders a ride with its distance, speed, expected ride time and
-// weather.
 func NewResource(ride ListedRide) Resource {
 	actualDurationSeconds := support.Money(ride.ActualDurationSeconds())
 
@@ -62,8 +59,6 @@ func NewResource(ride ListedRide) Resource {
 	return resource
 }
 
-// speedKmh is the ride's average speed, or absent when the distance is unknown.
-//
 // This divides by the exact ride time rather than by the Duration field, which
 // truncates to whole minutes and so overstates the speed.
 func speedKmh(ride ListedRide, actualDurationSeconds float64) support.NullFloat {
@@ -74,8 +69,6 @@ func speedKmh(ride ListedRide, actualDurationSeconds float64) support.NullFloat 
 	return support.FloatValue(support.Money((*ride.DistanceMeters / 1000) / (actualDurationSeconds / 3600)))
 }
 
-// durationVsExpectedSeconds is actual minus expected ride time: negative means
-// faster than the router predicted.
 func durationVsExpectedSeconds(ride ListedRide, actualDurationSeconds float64) support.NullFloat {
 	if ride.ExpectedDurationSeconds == nil {
 		return support.NullFloat{}

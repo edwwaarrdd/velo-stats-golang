@@ -7,24 +7,18 @@ import (
 	"time"
 )
 
-// DataSource fetches ride history from outside the database.
 type DataSource interface {
 	FetchRides() ([]Ride, error)
 }
 
-// JSONFileService fetches ride history from a local JSON export of the
-// customer rides.
 type JSONFileService struct {
 	path string
 }
 
-// NewJSONFileService builds a ride source reading the export at the given path.
 func NewJSONFileService(path string) *JSONFileService {
 	return &JSONFileService{path: path}
 }
 
-// rideDateTimeFormat is the format the ride export uses for its checkout and
-// checkin times.
 const rideDateTimeFormat = "2006-01-02 15:04:05"
 
 type ridesExport struct {
@@ -47,7 +41,6 @@ type ridesExport struct {
 	} `json:"data"`
 }
 
-// FetchRides returns every ride the export lists.
 func (s *JSONFileService) FetchRides() ([]Ride, error) {
 	payload, err := os.ReadFile(s.path)
 	if os.IsNotExist(err) {

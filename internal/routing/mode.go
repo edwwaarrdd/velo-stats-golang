@@ -1,7 +1,5 @@
-// Package routing calculates and caches cycling routes between stations.
 package routing
 
-// TravelMode is the way a route is travelled.
 type TravelMode string
 
 const (
@@ -9,8 +7,6 @@ const (
 	ModeBike TravelMode = "bike"
 )
 
-// OSRMInstancePath is the OSRM instance that actually routes for this mode.
-//
 // The demo server at router.project-osrm.org only hosts the car profile and
 // silently ignores the profile named in the URL, so every mode came back with
 // car driving times. FOSSGIS runs a separate instance per profile, and the

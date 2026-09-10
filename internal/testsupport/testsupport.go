@@ -1,4 +1,3 @@
-// Package testsupport builds the database and records the tests run against.
 package testsupport
 
 import (
@@ -16,7 +15,6 @@ import (
 	"velostats/internal/weather"
 )
 
-// NewDatabase opens a migrated database in the test's temporary directory.
 func NewDatabase(t *testing.T) *sql.DB {
 	t.Helper()
 
@@ -34,7 +32,6 @@ func NewDatabase(t *testing.T) *sql.DB {
 	return db
 }
 
-// Time parses a datetime written the way the ride export writes them.
 func Time(t *testing.T, value string) time.Time {
 	t.Helper()
 
@@ -46,7 +43,6 @@ func Time(t *testing.T, value string) time.Time {
 	return parsed
 }
 
-// Ride stores a ride, filling in every field the test does not care about.
 func Ride(t *testing.T, db *sql.DB, ride rides.Ride) rides.Ride {
 	t.Helper()
 
@@ -109,7 +105,6 @@ func Ride(t *testing.T, db *sql.DB, ride rides.Ride) rides.Ride {
 	return ride
 }
 
-// Station stores a station, filling in every field the test does not care about.
 func Station(t *testing.T, db *sql.DB, station stations.Station) stations.Station {
 	t.Helper()
 
@@ -152,14 +147,12 @@ func Station(t *testing.T, db *sql.DB, station stations.Station) stations.Statio
 	return station
 }
 
-// BikeRouteBetween caches a bike route between two stations, creating both.
 func BikeRouteBetween(t *testing.T, db *sql.DB, originCode, destinationCode string, distanceMeters, durationSeconds float64) {
 	t.Helper()
 
 	CachedRoute(t, db, originCode, destinationCode, routing.ModeBike, distanceMeters, durationSeconds)
 }
 
-// CachedRoute caches a route between two stations for a travel mode.
 func CachedRoute(t *testing.T, db *sql.DB, originCode, destinationCode string, mode routing.TravelMode, distanceMeters, durationSeconds float64) {
 	t.Helper()
 
@@ -184,7 +177,6 @@ func CachedRoute(t *testing.T, db *sql.DB, originCode, destinationCode string, m
 	}
 }
 
-// WeatherRecord caches an observation for a ride.
 func WeatherRecord(t *testing.T, db *sql.DB, rideID int64, observation weather.Observation) {
 	t.Helper()
 

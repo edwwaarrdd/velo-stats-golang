@@ -10,18 +10,15 @@ import (
 	"velostats/internal/support"
 )
 
-// Service calculates the route between two coordinates.
 type Service interface {
 	GetRoute(ctx context.Context, origin, destination support.Coordinate, mode TravelMode) (Route, error)
 }
 
-// OSRMService routes using a public OSRM instance.
 type OSRMService struct {
 	client  *http.Client
 	baseURL string
 }
 
-// NewOSRMService builds the OSRM-backed route service.
 func NewOSRMService(client *http.Client, baseURL string) *OSRMService {
 	return &OSRMService{client: client, baseURL: baseURL}
 }
@@ -35,7 +32,6 @@ type osrmResponse struct {
 	} `json:"routes"`
 }
 
-// GetRoute asks OSRM for the route between two coordinates.
 func (s *OSRMService) GetRoute(ctx context.Context, origin, destination support.Coordinate, mode TravelMode) (Route, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()

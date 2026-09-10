@@ -2,7 +2,6 @@ package weather
 
 import "velostats/internal/support"
 
-// Resource is how an observation is rendered by the API.
 type Resource struct {
 	TemperatureC            support.Float `json:"temperature_c"`
 	ApparentTemperatureC    support.Float `json:"apparent_temperature_c"`
@@ -18,7 +17,6 @@ type Resource struct {
 	ObservedAt              string        `json:"observed_at"`
 }
 
-// NewResource renders an observation.
 func NewResource(observation Observation) Resource {
 	return Resource{
 		TemperatureC:            support.Float(observation.TemperatureC),

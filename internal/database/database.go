@@ -1,4 +1,3 @@
-// Package database opens the SQLite connection and keeps its schema current.
 package database
 
 import (
@@ -19,9 +18,6 @@ import (
 //go:embed migrations/*.sql
 var migrations embed.FS
 
-// Open connects to the SQLite database at the given path, creating the file and
-// its directory when they do not exist yet.
-//
 // Writes are serialised onto a single connection: SQLite allows only one writer
 // at a time, and the API, the scheduler and every worker share one file.
 func Open(path string) (*sql.DB, error) {
@@ -51,7 +47,6 @@ func Open(path string) (*sql.DB, error) {
 	return db, nil
 }
 
-// Migrate applies every migration that has not run yet.
 func Migrate(db *sql.DB) error {
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS migrations (
 		id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

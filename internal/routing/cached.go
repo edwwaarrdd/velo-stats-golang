@@ -7,21 +7,15 @@ import (
 	"velostats/internal/support"
 )
 
-// CachedStationRouteService calculates routes between stations, caching results
-// so a route between the same pair of stations and travel mode is only ever
-// calculated once.
 type CachedStationRouteService struct {
 	routes  *Repository
 	service Service
 }
 
-// NewCachedStationRouteService builds the caching route service.
 func NewCachedStationRouteService(routes *Repository, service Service) *CachedStationRouteService {
 	return &CachedStationRouteService{routes: routes, service: service}
 }
 
-// GetRoute returns the cached route between two stations, calculating and
-// caching it when it is not known yet.
 func (s *CachedStationRouteService) GetRoute(ctx context.Context, origin, destination stations.Station, mode TravelMode) (Route, error) {
 	cached, err := s.routes.Find(ctx, origin.StationID, destination.StationID, mode)
 	if err != nil {

@@ -9,8 +9,6 @@ x-app: &app
     REDIS_PORT: "6379"
     CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
   volumes:
-    # The SQLite database and the ride export are shared with the host, so data
-    # survives a rebuild and a new export can be dropped in without one.
     - ./database:/app/database
     - ./data:/app/data
   depends_on:

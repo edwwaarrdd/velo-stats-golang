@@ -130,7 +130,6 @@ func TestRideListReturnsEveryFieldWithDistanceSpeedExpectedTimeAndWeather(t *tes
 	}]}`)
 }
 
-// firstResult decodes the single result the ride listing returns.
 func firstResult(t *testing.T, body string) map[string]any {
 	t.Helper()
 

@@ -28,7 +28,6 @@ const archiveBody = `{"hourly":{
 	"weather_code":[1,3]
 }}`
 
-// fakeArchive serves a canned archive response and records the query it got.
 func fakeArchive(t *testing.T, body string) (*weather.OpenMeteoService, *url.Values) {
 	t.Helper()
 

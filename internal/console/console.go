@@ -1,4 +1,3 @@
-// Package console holds the application's commands.
 package console
 
 import (
@@ -12,19 +11,15 @@ import (
 	"velostats/internal/app"
 )
 
-// Command is one thing the CLI can do.
 type Command struct {
 	Name        string
 	Description string
 
-	// Flags declares the command's options on the given flag set.
 	Flags func(flags *flag.FlagSet)
 
-	// Run does the work, and returns a non-nil error when it fails.
 	Run func(ctx context.Context, application *app.App) error
 }
 
-// Commands returns every command, keyed by name.
 func Commands() map[string]*Command {
 	registered := []*Command{
 		serve(),
@@ -45,7 +40,6 @@ func Commands() map[string]*Command {
 	return byName
 }
 
-// Usage prints every command and its description.
 func Usage(output *os.File) {
 	commands := Commands()
 

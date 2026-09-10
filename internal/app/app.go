@@ -1,4 +1,3 @@
-// Package app wires the application's pieces together.
 package app
 
 import (
@@ -21,7 +20,6 @@ import (
 	"velostats/internal/weather"
 )
 
-// App holds every service the commands and the API need.
 type App struct {
 	Config config.Config
 	Logger *slog.Logger
@@ -45,7 +43,6 @@ type App struct {
 	JobHandlers *jobs.Handlers
 }
 
-// New builds the application and migrates its database.
 func New(cfg config.Config) (*App, error) {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
@@ -112,7 +109,6 @@ func New(cfg config.Config) (*App, error) {
 	}, nil
 }
 
-// Close releases the database and Redis connections.
 func (a *App) Close() error {
 	if err := a.Queue.Close(); err != nil {
 		a.Logger.Error("failed to close the queue connection", "error", err)
@@ -121,7 +117,6 @@ func (a *App) Close() error {
 	return a.DB.Close()
 }
 
-// Context returns a context that is cancelled when the process is interrupted.
 func Context(parent context.Context) (context.Context, context.CancelFunc) {
 	return context.WithCancel(parent)
 }

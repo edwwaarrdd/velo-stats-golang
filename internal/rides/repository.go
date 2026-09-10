@@ -13,19 +13,14 @@ import (
 	"velostats/internal/weather"
 )
 
-// Repository stores and reads rides.
 type Repository struct {
 	db *sql.DB
 }
 
-// NewRepository builds a repository over the given database.
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-// cachedRouteColumn is the correlated subquery that resolves a ride's cycling
-// distance or expected ride time from the cached route between its origin and
-// destination stations.
 func cachedRouteColumn(column string) string {
 	return `(SELECT sr.` + column + ` FROM station_routes sr
 		WHERE sr.origin_station_id = rides.origin_station_code
@@ -39,8 +34,6 @@ const rideColumns = `rides.ride_id, rides.account_id, rides.status, rides.durati
 	rides.destination_station_code, rides.destination_station, rides.destination_slot_id, rides.checkin_time,
 	rides.distance_checked_at, rides.weather_checked_at`
 
-// All returns every ride, most recent first, with its cached distance, expected
-// ride time and weather.
 func (r *Repository) All(ctx context.Context) ([]ListedRide, error) {
 	rows, err := r.db.QueryContext(ctx, `SELECT `+rideColumns+`,
 			`+cachedRouteColumn("distance_meters")+` AS distance_meters,
@@ -70,7 +63,6 @@ func (r *Repository) All(ctx context.Context) ([]ListedRide, error) {
 	return listed, rows.Err()
 }
 
-// Find returns the ride with the given id, or nil when it is unknown.
 func (r *Repository) Find(ctx context.Context, rideID int64) (*Ride, error) {
 	row := r.db.QueryRowContext(ctx, `SELECT `+rideColumns+` FROM rides WHERE ride_id = ?`, rideID)
 
@@ -86,8 +78,6 @@ func (r *Repository) Find(ctx context.Context, rideID int64) (*Ride, error) {
 	return &ride, nil
 }
 
-// Save inserts the ride, or updates it when it already exists. It reports
-// whether the ride was newly created.
 func (r *Repository) Save(ctx context.Context, ride Ride) (bool, error) {
 	now := support.DatabaseDateTime(time.Now())
 
@@ -127,8 +117,6 @@ func (r *Repository) Save(ctx context.Context, ride Ride) (bool, error) {
 	return true, nil
 }
 
-// IDs returns the id of every ride, optionally only those whose given check
-// column has not run yet.
 func (r *Repository) IDs(ctx context.Context, uncheckedColumn string) ([]int64, error) {
 	query := `SELECT ride_id FROM rides`
 	if uncheckedColumn != "" {
@@ -155,7 +143,6 @@ func (r *Repository) IDs(ctx context.Context, uncheckedColumn string) ([]int64, 
 	return ids, rows.Err()
 }
 
-// MarkChecked records that a background check has run for a ride.
 func (r *Repository) MarkChecked(ctx context.Context, rideID int64, column string, at time.Time) error {
 	if _, err := r.db.ExecContext(ctx,
 		`UPDATE rides SET `+column+` = ?, updated_at = ? WHERE ride_id = ?`,
@@ -167,7 +154,6 @@ func (r *Repository) MarkChecked(ctx context.Context, rideID int64, column strin
 	return nil
 }
 
-// CheckoutTimes returns the check-out time of every ride, in UTC.
 func (r *Repository) CheckoutTimes(ctx context.Context) ([]time.Time, error) {
 	rows, err := r.db.QueryContext(ctx, `SELECT checkout_time FROM rides`)
 	if err != nil {

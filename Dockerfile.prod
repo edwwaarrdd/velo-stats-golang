@@ -1,12 +1,3 @@
-# Production image.
-#
-# It differs from the development image in two ways: the seeded SQLite database
-# is baked into the image instead of bind-mounted from the host, so the running
-# container touches no host filesystem, and the image carries nothing but the
-# static binary and its data.
-#
-# The build context is filtered by Dockerfile.prod.dockerignore, which - unlike
-# the development .dockerignore - lets database/database.sqlite through.
 
 FROM golang:1.25 AS build
 

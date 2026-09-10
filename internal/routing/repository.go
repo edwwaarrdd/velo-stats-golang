@@ -10,18 +10,14 @@ import (
 	"velostats/internal/support"
 )
 
-// Repository stores the routes already calculated between station pairs.
 type Repository struct {
 	db *sql.DB
 }
 
-// NewRepository builds a repository over the given database.
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-// Find returns the cached route between two stations for a travel mode, or nil
-// when it has not been calculated yet.
 func (r *Repository) Find(ctx context.Context, originID, destinationID string, mode TravelMode) (*Route, error) {
 	var route Route
 
@@ -43,7 +39,6 @@ func (r *Repository) Find(ctx context.Context, originID, destinationID string, m
 	return &route, nil
 }
 
-// Save caches a route between two stations.
 func (r *Repository) Save(ctx context.Context, originID, destinationID string, mode TravelMode, route Route) error {
 	now := support.DatabaseDateTime(time.Now())
 

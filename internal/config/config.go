@@ -1,4 +1,3 @@
-// Package config reads the application's settings from the environment.
 package config
 
 import (
@@ -8,7 +7,6 @@ import (
 	"strings"
 )
 
-// Config holds every setting the application needs.
 type Config struct {
 	AppEnv string
 
@@ -28,8 +26,6 @@ type Config struct {
 	RidesJSONPath         string
 }
 
-// Load reads the configuration, taking values from a .env file in the working
-// directory first and from the real environment after that.
 func Load() Config {
 	loadDotEnv(".env")
 
@@ -82,8 +78,6 @@ func splitAndTrim(value string) []string {
 	return parts
 }
 
-// loadDotEnv sets any variable the file declares that the environment does not
-// already define. A missing file is not an error.
 func loadDotEnv(path string) {
 	file, err := os.Open(path)
 	if err != nil {

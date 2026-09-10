@@ -9,7 +9,6 @@ import (
 	"velostats/internal/rides"
 )
 
-// writeExport writes a rides export and returns its path.
 func writeExport(t *testing.T, body string) string {
 	t.Helper()
 

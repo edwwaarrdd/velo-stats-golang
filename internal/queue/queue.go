@@ -1,5 +1,3 @@
-// Package queue pushes background jobs onto Redis and runs the workers that
-// drain them.
 package queue
 
 import (
@@ -23,7 +21,6 @@ const (
 	RideWeatherChecks  = "ride_weather_checks"
 )
 
-// Job is one unit of background work as it travels through Redis.
 type Job struct {
 	ID       string          `json:"id"`
 	Type     string          `json:"type"`
@@ -32,29 +29,24 @@ type Job struct {
 	PushedAt time.Time       `json:"pushed_at"`
 }
 
-// Client pushes and pops jobs on Redis.
 type Client struct {
 	redis  *redis.Client
 	prefix string
 }
 
-// NewClient builds a queue client over the given Redis connection. Keys are
-// namespaced with the prefix so several applications can share one Redis.
+// Keys are namespaced with the prefix so several applications can share one Redis.
 func NewClient(client *redis.Client, prefix string) *Client {
 	return &Client{redis: client, prefix: prefix}
 }
 
-// Close releases the Redis connection.
 func (c *Client) Close() error {
 	return c.redis.Close()
 }
 
-// Ping checks that Redis is reachable.
 func (c *Client) Ping(ctx context.Context) error {
 	return c.redis.Ping(ctx).Err()
 }
 
-// Push adds a job to the end of a queue.
 func (c *Client) Push(ctx context.Context, queue, jobType string, payload any) error {
 	encodedPayload, err := json.Marshal(payload)
 	if err != nil {
@@ -81,8 +73,6 @@ func (c *Client) Push(ctx context.Context, queue, jobType string, payload any) e
 	return nil
 }
 
-// Pop takes the next job off any of the given queues, waiting up to the timeout
-// for one to arrive. It returns nil when the wait times out.
 func (c *Client) Pop(ctx context.Context, queues []string, timeout time.Duration) (*Job, error) {
 	keys := make([]string, 0, len(queues))
 	for _, queue := range queues {
@@ -110,7 +100,6 @@ func (c *Client) Pop(ctx context.Context, queues []string, timeout time.Duration
 	return &job, nil
 }
 
-// Size reports how many jobs are waiting on a queue.
 func (c *Client) Size(ctx context.Context, queue string) (int64, error) {
 	size, err := c.redis.LLen(ctx, c.key(queue)).Result()
 	if err != nil {

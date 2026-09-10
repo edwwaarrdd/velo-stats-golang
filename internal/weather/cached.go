@@ -7,21 +7,15 @@ import (
 	"velostats/internal/support"
 )
 
-// CachedRideWeatherService fetches the weather for a ride's checkin time and
-// origin station, caching results so the same ride's weather is only ever
-// fetched once unless forced.
 type CachedRideWeatherService struct {
 	records *Repository
 	service Service
 }
 
-// NewCachedRideWeatherService builds the caching ride weather service.
 func NewCachedRideWeatherService(records *Repository, service Service) *CachedRideWeatherService {
 	return &CachedRideWeatherService{records: records, service: service}
 }
 
-// GetWeather returns the cached observation for a ride, fetching and caching it
-// when it is not known yet or when the fetch is forced.
 func (s *CachedRideWeatherService) GetWeather(
 	ctx context.Context,
 	rideID int64,

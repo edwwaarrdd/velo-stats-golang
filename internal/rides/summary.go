@@ -9,7 +9,6 @@ import (
 	"velostats/internal/support"
 )
 
-// Summary aggregates duration and distance statistics across every ride.
 type Summary struct {
 	TotalRides            int64             `json:"total_rides"`
 	TotalDuration         support.NullInt   `json:"total_duration"`
@@ -20,18 +19,14 @@ type Summary struct {
 	AverageDistanceMeters support.NullFloat `json:"average_distance_meters"`
 }
 
-// SummaryCalculator aggregates ride statistics in the database.
 type SummaryCalculator struct {
 	db *sql.DB
 }
 
-// NewSummaryCalculator builds the calculator over the given database.
 func NewSummaryCalculator(db *sql.DB) *SummaryCalculator {
 	return &SummaryCalculator{db: db}
 }
 
-// Calculate returns the aggregate statistics across every ride. Distances are
-// averaged over only the rides that have a cached route.
 func (c *SummaryCalculator) Calculate(ctx context.Context) (Summary, error) {
 	var (
 		totalRides            int64

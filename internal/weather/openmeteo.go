@@ -13,13 +13,10 @@ import (
 	"velostats/internal/support"
 )
 
-// Service fetches the weather observed at a location for the hour of a time.
 type Service interface {
 	GetWeather(ctx context.Context, location support.Coordinate, at time.Time) (Observation, error)
 }
 
-// HourlyVariables are the biking-relevant hourly variables requested from the
-// Open-Meteo archive.
 var HourlyVariables = []string{
 	"temperature_2m",
 	"apparent_temperature",
@@ -34,13 +31,11 @@ var HourlyVariables = []string{
 	"weather_code",
 }
 
-// OpenMeteoService reads observations from the free Open-Meteo archive.
 type OpenMeteoService struct {
 	client     *http.Client
 	archiveURL string
 }
 
-// NewOpenMeteoService builds the Open-Meteo backed weather service.
 func NewOpenMeteoService(client *http.Client, archiveURL string) *OpenMeteoService {
 	return &OpenMeteoService{client: client, archiveURL: archiveURL}
 }
@@ -63,7 +58,6 @@ type archiveResponse struct {
 	} `json:"hourly"`
 }
 
-// GetWeather returns the observation for the hour of the given time.
 func (s *OpenMeteoService) GetWeather(ctx context.Context, location support.Coordinate, at time.Time) (Observation, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()

@@ -9,7 +9,6 @@ import (
 	"velostats/internal/stations"
 )
 
-// Router builds the API's routes.
 func Router(
 	rideRepository *rides.Repository,
 	summary *rides.SummaryCalculator,
@@ -31,9 +30,6 @@ func Router(
 	return normalisePath(cors(allowedOrigins, logRequests(logger, mux)))
 }
 
-// normalisePath strips the leading and trailing slashes from the request path,
-// so /rides, /rides/ and /rides// all reach the same handler and are all
-// answered directly rather than redirected.
 func normalisePath(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		normalised := "/" + strings.Trim(r.URL.Path, "/")
@@ -49,7 +45,6 @@ func normalisePath(next http.Handler) http.Handler {
 	})
 }
 
-// logRequests writes one line per request.
 func logRequests(logger *slog.Logger, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("request", "method", r.Method, "path", r.URL.Path)

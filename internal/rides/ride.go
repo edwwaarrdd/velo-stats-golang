@@ -1,5 +1,3 @@
-// Package rides holds the ride history: the model, its storage, the export it
-// is loaded from, the statistics derived from it and the endpoints serving it.
 package rides
 
 import (
@@ -8,7 +6,6 @@ import (
 	"velostats/internal/weather"
 )
 
-// Ride is a single trip between two stations.
 type Ride struct {
 	RideID                 int64
 	AccountID              int64
@@ -27,8 +24,6 @@ type Ride struct {
 	WeatherCheckedAt       *time.Time
 }
 
-// ListedRide is a ride enriched with everything the listing endpoint reports:
-// the cached route between its stations and the weather it was ridden in.
 type ListedRide struct {
 	Ride
 
@@ -37,8 +32,8 @@ type ListedRide struct {
 	Weather                 *weather.Observation
 }
 
-// ActualDurationSeconds is the ride time to the second, since Duration is only
-// stored in whole minutes.
+// Duration is only stored in whole minutes, so this recomputes the ride time to
+// the second.
 func (r Ride) ActualDurationSeconds() float64 {
 	return r.CheckinTime.Sub(r.CheckoutTime).Seconds()
 }

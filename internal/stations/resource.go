@@ -2,7 +2,6 @@ package stations
 
 import "velostats/internal/support"
 
-// Resource is how a station is rendered by the API.
 type Resource struct {
 	StationID string        `json:"station_id"`
 	Name      string        `json:"name"`
@@ -10,7 +9,6 @@ type Resource struct {
 	Lon       support.Float `json:"lon"`
 }
 
-// NewResource renders a station.
 func NewResource(station Station) Resource {
 	return Resource{
 		StationID: station.StationID,

@@ -1,5 +1,3 @@
-// Package jobs holds the background work the queues carry, and the handlers
-// that run it.
 package jobs
 
 import (
@@ -17,55 +15,45 @@ import (
 	"velostats/internal/weather"
 )
 
-// The job types carried on the queues.
 const (
 	TypeLogTestMessage    = "log_test_message"
 	TypeCheckRideDistance = "check_ride_distance"
 	TypeCheckRideWeather  = "check_ride_weather"
 )
 
-// LogTestMessagePayload is the message a test job asks the worker to log.
 type LogTestMessagePayload struct {
 	Message string `json:"message"`
 }
 
-// CheckRideDistancePayload names the ride whose distance should be resolved.
 type CheckRideDistancePayload struct {
 	RideID int64 `json:"ride_id"`
 }
 
-// CheckRideWeatherPayload names the ride whose weather should be fetched.
 type CheckRideWeatherPayload struct {
 	RideID int64 `json:"ride_id"`
 	Force  bool  `json:"force"`
 }
 
-// Dispatcher pushes jobs onto their queues.
 type Dispatcher struct {
 	queue *queue.Client
 }
 
-// NewDispatcher builds a dispatcher over the given queue client.
 func NewDispatcher(client *queue.Client) *Dispatcher {
 	return &Dispatcher{queue: client}
 }
 
-// DispatchLogTestMessage queues a test job that logs a message from the worker.
 func (d *Dispatcher) DispatchLogTestMessage(ctx context.Context, message string) error {
 	return d.queue.Push(ctx, queue.Default, TypeLogTestMessage, LogTestMessagePayload{Message: message})
 }
 
-// DispatchCheckRideDistance queues a distance check for a ride.
 func (d *Dispatcher) DispatchCheckRideDistance(ctx context.Context, rideID int64) error {
 	return d.queue.Push(ctx, queue.RideDistanceChecks, TypeCheckRideDistance, CheckRideDistancePayload{RideID: rideID})
 }
 
-// DispatchCheckRideWeather queues a weather check for a ride.
 func (d *Dispatcher) DispatchCheckRideWeather(ctx context.Context, rideID int64, force bool) error {
 	return d.queue.Push(ctx, queue.RideWeatherChecks, TypeCheckRideWeather, CheckRideWeatherPayload{RideID: rideID, Force: force})
 }
 
-// Handlers runs the jobs the queues carry.
 type Handlers struct {
 	rides    *rides.Repository
 	stations *stations.Repository
@@ -74,7 +62,6 @@ type Handlers struct {
 	logger   *slog.Logger
 }
 
-// NewHandlers builds the job handlers.
 func NewHandlers(
 	rideRepository *rides.Repository,
 	stationRepository *stations.Repository,
@@ -91,15 +78,12 @@ func NewHandlers(
 	}
 }
 
-// Register attaches every handler to a worker.
 func (h *Handlers) Register(worker *queue.Worker) {
 	worker.Register(TypeLogTestMessage, h.LogTestMessage)
 	worker.Register(TypeCheckRideDistance, h.CheckRideDistance)
 	worker.Register(TypeCheckRideWeather, h.CheckRideWeather)
 }
 
-// LogTestMessage logs a message from the worker, so the queue setup can be
-// verified.
 func (h *Handlers) LogTestMessage(_ context.Context, raw json.RawMessage) error {
 	var payload LogTestMessagePayload
 	if err := json.Unmarshal(raw, &payload); err != nil {
@@ -111,8 +95,6 @@ func (h *Handlers) LogTestMessage(_ context.Context, raw json.RawMessage) error 
 	return nil
 }
 
-// CheckRideDistance calculates and caches the cycling distance between a ride's
-// origin and destination stations.
 func (h *Handlers) CheckRideDistance(ctx context.Context, raw json.RawMessage) error {
 	var payload CheckRideDistancePayload
 	if err := json.Unmarshal(raw, &payload); err != nil {
@@ -153,8 +135,6 @@ func (h *Handlers) CheckRideDistance(ctx context.Context, raw json.RawMessage) e
 	return h.rides.MarkChecked(ctx, ride.RideID, "distance_checked_at", time.Now())
 }
 
-// CheckRideWeather fetches and caches the weather at a ride's origin station and
-// checkin time.
 func (h *Handlers) CheckRideWeather(ctx context.Context, raw json.RawMessage) error {
 	var payload CheckRideWeatherPayload
 	if err := json.Unmarshal(raw, &payload); err != nil {

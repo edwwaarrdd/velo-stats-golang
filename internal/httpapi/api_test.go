@@ -15,7 +15,6 @@ import (
 	"velostats/internal/testsupport"
 )
 
-// get calls the API and returns the raw response body.
 func get(t *testing.T, db *sql.DB, path string) (int, string) {
 	t.Helper()
 
@@ -34,8 +33,6 @@ func get(t *testing.T, db *sql.DB, path string) (int, string) {
 	return recorder.Code, recorder.Body.String()
 }
 
-// assertJSON checks the response body against the exact JSON the API should
-// return, ignoring only key order.
 func assertJSON(t *testing.T, body, want string) {
 	t.Helper()
 

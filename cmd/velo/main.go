@@ -1,4 +1,3 @@
-// Command velo serves the Velo Stats API and runs its background work.
 package main
 
 import (

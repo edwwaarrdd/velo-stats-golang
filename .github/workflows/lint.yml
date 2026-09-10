@@ -16,13 +16,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          # The version the module declares, so CI and development agree.
           go-version-file: go.mod
           cache: true
 
       - name: Lint
-        # golangci-lint covers gofmt, goimports and go vet, so the test workflow
-        # no longer runs those separately.
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.13

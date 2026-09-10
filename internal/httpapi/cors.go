@@ -5,8 +5,6 @@ import (
 	"slices"
 )
 
-// cors answers cross-origin requests from the configured origins, and replies
-// to preflight requests without reaching a handler.
 func cors(allowedOrigins []string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")

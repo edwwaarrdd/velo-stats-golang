@@ -8,7 +8,6 @@ import (
 	"velostats/internal/support"
 )
 
-// The prices the cost breakdown compares.
 const (
 	AnnualSubscriptionPriceEUR = 58.0
 	DaysPerYear                = 365
@@ -16,8 +15,6 @@ const (
 	WeekPassPriceEUR           = 12.0
 )
 
-// Cost is what the annual subscription costs per ride, and how that compares to
-// paying for the same rides with day or week passes.
 type Cost struct {
 	TotalRides                   int64             `json:"total_rides"`
 	FirstRideDate                *string           `json:"first_ride_date"`
@@ -32,17 +29,14 @@ type Cost struct {
 	MoneySavedVsWeekPassesEUR    support.NullFloat `json:"money_saved_vs_week_passes_eur"`
 }
 
-// CostCalculator works out the subscription cost per ride.
 type CostCalculator struct {
 	rides *Repository
 }
 
-// NewCostCalculator builds the calculator over the given ride repository.
 func NewCostCalculator(rides *Repository) *CostCalculator {
 	return &CostCalculator{rides: rides}
 }
 
-// Calculate returns the cost breakdown across every ride.
 func (c *CostCalculator) Calculate(ctx context.Context) (Cost, error) {
 	checkoutTimes, err := c.rides.CheckoutTimes(ctx)
 	if err != nil {
