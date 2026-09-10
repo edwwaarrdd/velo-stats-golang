@@ -1,12 +1,12 @@
-name: Tests
+name: Lint
 
 on:
   push:
   pull_request:
 
 jobs:
-  test:
-    name: Build and test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,9 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Build
-        run: go build ./...
-
-      - name: Test
-        run: go test -race ./...
+      - name: Lint
+        # golangci-lint covers gofmt, goimports and go vet, so the test workflow
+        # no longer runs those separately.
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.13
