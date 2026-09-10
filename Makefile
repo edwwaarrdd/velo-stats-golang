@@ -1,4 +1,4 @@
-.PHONY: build test fmt vet run worker up down
+.PHONY: build test fmt vet lint run worker up down
 
 build:
 	go build -o velo ./cmd/velo
@@ -11,6 +11,9 @@ fmt:
 
 vet:
 	go vet ./...
+
+lint:
+	golangci-lint run
 
 run:
 	go run ./cmd/velo serve

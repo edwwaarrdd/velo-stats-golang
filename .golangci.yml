@@ -1,0 +1,19 @@
+version: "2"
+
+linters:
+  # The standard set is errcheck, govet, ineffassign, staticcheck and unused.
+  default: standard
+  enable:
+    - misspell
+    - revive
+  exclusions:
+    presets:
+      - comments
+      - std-error-handling
+    paths:
+      - data
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
