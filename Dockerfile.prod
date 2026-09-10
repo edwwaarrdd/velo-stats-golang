@@ -1,0 +1,40 @@
+# Production image.
+#
+# It differs from the development image in two ways: the seeded SQLite database
+# is baked into the image instead of bind-mounted from the host, so the running
+# container touches no host filesystem, and the image carries nothing but the
+# static binary and its data.
+#
+# The build context is filtered by Dockerfile.prod.dockerignore, which - unlike
+# the development .dockerignore - lets database/database.sqlite through.
+
+FROM golang:1.25 AS build
+
+WORKDIR /src
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/velo ./cmd/velo
+
+FROM alpine:3.21
+
+RUN apk add --no-cache ca-certificates tzdata wget
+
+WORKDIR /app
+
+COPY --from=build /out/velo /usr/local/bin/velo
+COPY data ./data
+COPY database/database.sqlite ./database/database.sqlite
+
+ENV APP_ENV=production \
+    DB_DATABASE=/app/database/database.sqlite \
+    RIDES_JSON_PATH=/app/data/rides.json \
+    HTTP_PORT=8000
+
+EXPOSE 8000
+
+ENTRYPOINT ["velo"]
+CMD ["serve"]

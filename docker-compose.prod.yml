@@ -1,0 +1,50 @@
+# Production-shaped stack: no bind mounts, no source on the host, the seeded
+# database baked into the image.
+#
+# The CPU limit is the same on all four backends in the comparison, so the
+# runtimes are measured against an equal share of the machine rather than
+# against however many cores each happens to grab.
+
+# A separate project name, so the production images and containers never
+# collide with the development ones and both can stay built side by side.
+name: velo-stats-golang-prod
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: ["serve"]
+    environment:
+      APP_ENV: production
+      HTTP_PORT: "8000"
+      # Go serves requests on every core it is given. Capping it to match the
+      # worker count the other runtimes get keeps the comparison honest.
+      GOMAXPROCS: "4"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/_healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
