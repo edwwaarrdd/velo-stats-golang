@@ -97,7 +97,7 @@ func (h *StationHandler) Index(w http.ResponseWriter, r *http.Request) {
 
 // healthcheck reports that the app is up.
 func healthcheck(logger *slog.Logger) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, _ *http.Request) {
 		writeJSON(w, logger, http.StatusOK, map[string]string{"message": "ok"})
 	}
 }
