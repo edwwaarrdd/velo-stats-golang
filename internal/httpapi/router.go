@@ -3,6 +3,7 @@ package httpapi
 import (
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"velostats/internal/rides"
 	"velostats/internal/stations"
@@ -27,7 +28,25 @@ func Router(
 	mux.HandleFunc("GET /rides/cost", rideHandler.Cost)
 	mux.HandleFunc("GET /stations", stationHandler.Index)
 
-	return cors(allowedOrigins, logRequests(logger, mux))
+	return normalisePath(cors(allowedOrigins, logRequests(logger, mux)))
+}
+
+// normalisePath strips the leading and trailing slashes from the request path,
+// so /rides, /rides/ and /rides// all reach the same handler and are all
+// answered directly rather than redirected.
+func normalisePath(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		normalised := "/" + strings.Trim(r.URL.Path, "/")
+
+		if normalised != r.URL.Path {
+			r = r.Clone(r.Context())
+			r.URL.Path = normalised
+			// The escaped form is now stale, so let it be derived from the path.
+			r.URL.RawPath = ""
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 // logRequests writes one line per request.

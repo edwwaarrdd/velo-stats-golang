@@ -68,3 +68,40 @@ func TestHealthcheckReportsThatTheApplicationIsUp(t *testing.T) {
 		t.Errorf("body = %s", body)
 	}
 }
+
+func TestEveryEndpointAnswersWithATrailingSlash(t *testing.T) {
+	db := testsupport.NewDatabase(t)
+
+	paths := map[string]string{
+		"/_healthcheck/":  "/_healthcheck",
+		"/rides/":         "/rides",
+		"/rides//":        "/rides",
+		"/rides/summary/": "/rides/summary",
+		"/rides/cost/":    "/rides/cost",
+		"/stations/":      "/stations",
+	}
+
+	for path, canonical := range paths {
+		t.Run(path, func(t *testing.T) {
+			status, body := get(t, db, path)
+
+			if status != http.StatusOK {
+				t.Fatalf("status = %d, want 200", status)
+			}
+
+			wantStatus, wantBody := get(t, db, canonical)
+
+			if status != wantStatus || body != wantBody {
+				t.Errorf("%s returned %d %s, want the same as %s: %d %s", path, status, body, canonical, wantStatus, wantBody)
+			}
+		})
+	}
+}
+
+func TestAnUnknownPathIsStillNotFound(t *testing.T) {
+	for _, path := range []string{"/nope", "/rides/nope", "/rides/summary/nope"} {
+		if status, _ := get(t, testsupport.NewDatabase(t), path); status != http.StatusNotFound {
+			t.Errorf("%s returned %d, want 404", path, status)
+		}
+	}
+}
